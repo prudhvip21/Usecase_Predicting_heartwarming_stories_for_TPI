@@ -52,7 +52,7 @@ def get_month(tbi):
     links = []
     for i in range(1,50) :
         page = requests.get(tbi)
-        time.sleep(2)
+        time.sleep(20)
         soup = BeautifulSoup(page.text, "html.parser")
         links_source = soup.find_all('a', class_="g1-frame")
 
@@ -67,7 +67,7 @@ def get_month(tbi):
 
     for k in links :
         link_page = requests.get(k)
-        time.sleep(3)
+        time.sleep(8)
         soup_page = BeautifulSoup(link_page.text, "html.parser")
         article = []
         for para in soup_page.find_all('p'):
@@ -101,9 +101,10 @@ import os
 os.chdir("C:\\Users\\Prudhvi\\Google Drive (prudhvi.potuganti@gmail.com)\\codes\\tpi\\scrapped_data")
 
 for url in urls:
-    time.sleep(30)
+    time.sleep(60)
     get_month(url)
     print ((url)," done")
+    urls.remove(url)
 
 
 
