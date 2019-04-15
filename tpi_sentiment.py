@@ -1,16 +1,20 @@
 
 
 from bs4 import BeautifulSoup
+import requests
 import urllib2
+import pandas as pd
+import time
 
 #tbi = "http://timesofindia.indiatimes.com/city/patna/topper-scam-samastipur-principal-3-others-held/articleshow/58990221.cms "
 # tbi = "https://en.wikipedia.org/wiki/List_of_state_and_union_territory_capitals_in_India"
 
 tbi = "http://www.thebetterindia.com/date/2017/05/"
-page = urllib2.urlopen(tbi)
-soup = BeautifulSoup(page,"html.parser")
+#page = urllib2.urlopen(tbi)
+page = requests.get(tbi)
+soup = BeautifulSoup(page.text,"html.parser")
 
-print soup.prettify()
+print (soup.prettify())
 pages = soup.find_all('a',class_="g1-frame") # gets the links for the articles
 
 k = soup.find_all('a',class_="g1-button g1-button-m g1-button-solid g1-load-more")
@@ -35,27 +39,36 @@ h2 class ="entry-subtitle g1-gamma g1-gamma-3rd"
 
 
 """reading archives of entire month"""
-tbi = "http://www.thebetterindia.com/date/2017/05/"
-page = urllib2.urlopen(tbi)
-soup = BeautifulSoup(page,"html.parser")
-content = []
-heading = []
 
-for i in range(1,50) :
-    page = urllib2.urlopen(tbi)
-    soup = BeautifulSoup(page, "html.parser")
-    links = soup.find_all('a', class_="g1-frame") # all links in that page
-    links = [item.get('href') for item in links]
-    try :
-        pp = soup.find_all('a', class_="g1-button g1-button-m g1-button-solid g1-load-more") #next page
-        tbi = pp[0].get('data-g1-next-page-url')
-        print i, tbi
-    except :
-        break
+tbi = "http://www.thebetterindia.com/date/2017/05/"
+page = requests.get(tbi)
+soup = BeautifulSoup(page.text,"html.parser")
+#content = []
+#heading = []
+
+def get_month(tbi):
+    content = []
+    heading = []
+    links = []
+    for i in range(1,50) :
+        page = requests.get(tbi)
+        time.sleep(2)
+        soup = BeautifulSoup(page.text, "html.parser")
+        links_source = soup.find_all('a', class_="g1-frame")
+
+        # all links in that page
+        links = links + [item.get('href') for item in links_source]
+        try :
+            pp = soup.find_all('a', class_="g1-button g1-button-m g1-button-solid g1-load-more") #next page
+            tbi = pp[0].get('data-g1-next-page-url')
+            print (i, tbi)
+        except :
+            break
 
     for k in links :
-        link_page = urllib2.urlopen(k)
-        soup_page = BeautifulSoup(link_page, "html.parser")
+        link_page = requests.get(k)
+        time.sleep(3)
+        soup_page = BeautifulSoup(link_page.text, "html.parser")
         article = []
         for para in soup_page.find_all('p'):
             if len(para.get_text()) > 50 :
@@ -65,6 +78,38 @@ for i in range(1,50) :
         h.append(soup_page.find_all('h2')[0].get_text())
         h.append(soup_page.find_all('h1')[0].get_text())
         heading.append(h)
+
+    data = pd.DataFrame(columns = ['month','heading','content'])
+    data['heading'] = heading
+    data['content'] = content
+    data['month'] = tbi[35:].replace('/','-')
+    filename =  tbi[35:].replace('/','-') + '.csv '
+    data.to_csv(filename)
+
+
+
+
+# generate months urls
+
+urls = []
+for i in range(2013,2019):
+    for j in range(1,13):
+        url = "http://www.thebetterindia.com/date/" + str(i) + '/' + str(j)
+        urls.append(url)
+
+import os
+os.chdir("C:\\Users\\Prudhvi\\Google Drive (prudhvi.potuganti@gmail.com)\\codes\\tpi\\scrapped_data")
+
+for url in urls:
+    time.sleep(30)
+    get_month(url)
+    print ((url)," done")
+
+
+
+
+
+
 
 
 
