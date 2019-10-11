@@ -117,7 +117,7 @@ for url in urls:
 """ Times of India archives page news links extractor """
 
 page = "http://timesofindia.indiatimes.com/2008/1/17/archivelist/year-2008,month-1,starttime-39464.cms"
-page = urllib2.urlopen(page)
+page = requests.get(page)
 soup = BeautifulSoup(page,"html.parser")
 
 links_toi = [ ]
@@ -134,21 +134,24 @@ for item in soup.find_all('a') :
 
 # extracting data from each page
 
-page = "http://timesofindia.indiatimes.com/business/india-business/Send-Money-to-India-the-safe-convenient-inexpensive-way/articleshow/11079712.cms"
-page = urllib2.urlopen(page)
-soup = BeautifulSoup(page,"html.parser")
-print soup.prettify()
+toi = "http://timesofindia.indiatimes.com/business/india-business/Send-Money-to-India-the-safe-convenient-inexpensive-way/articleshow/11079712.cms"
+
+page = requests.get(toi)
+soup = BeautifulSoup(page.content,'html.parser')
+print (soup.prettify())
 
 
 """ Gets the text of the article  of TOI """ 
 
 for item in soup.find_all('div', class_="Normal") :
-    print item.get_text()
+    print (item.get_text())
     
 
 """ Gets the heading of link """ 
     
 soup.find('h1', class_= "heading1").get_text()  
-    
+soup.find('h2', class_= "heading2").get_text()
+
+
     
     
