@@ -150,7 +150,7 @@ for item in soup.find_all('div', class_="Normal") :
 """ Gets the heading of link """ 
     
 soup.find('h1', class_= "heading1").get_text()  
-soup.find('h2', class_= "heading2").get_text()
+
 
 
     
