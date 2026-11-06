@@ -20,3 +20,7 @@ SVM accuracy of about 0.82 in the saved notebook output.
 ## Data
 
 Scraped article datasets and reference papers are included. Credit for the papers remains with their authors.
+
+## Earlier versions
+
+The `earlier-version/` folder keeps files from earlier versions of this project (DT-tpi, ThePositiveIndia) that differ from the files above.
